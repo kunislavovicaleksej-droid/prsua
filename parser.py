@@ -292,12 +292,6 @@ def check_news():
                         article_text, image_url = get_article_data(link)
                         
                         if len(article_text) > 200: 
-                            if is_duplicate_news(article_text, posted_topics):
-                                print(f"🙈 Нейросеть определила, что это ДУБЛИКАТ. Пропускаю...")
-                                history.append(link)
-                                new_posts_found = True
-                                continue
-                            
                             ai_post = call_groq_api(SYSTEM_PROMPT, article_text)
                             
                             if ai_post:
