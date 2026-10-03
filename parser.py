@@ -85,7 +85,8 @@ RSS_URLS = [
     # публичного RSS, либо он спрятан по нестандартному пути. Если обе
     # строки ниже будут выдавать ошибку — просто удалим их из списка.
     'https://www.radiosvoboda.org/api/zrqiteuuir',
-    'https://defence-ua.com/rss'
+    'https://defence-ua.com/rss',
+    'https://sud.ua/rss/rss_news_uk.xml'
 ]
 
 HISTORY_FILE = 'history.json'
