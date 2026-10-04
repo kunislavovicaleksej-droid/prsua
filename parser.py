@@ -271,7 +271,16 @@ def check_news():
     # новый процесс, но history.json сохраняется в репозитории между запусками.
     is_first_run = FIRST_RUN and len(history) == 0
 
+    # Внутренний бюджет времени — если не успели обработать всё за отведённое
+    # время, прерываем цикл ЗАРАНЕЕ и спокойно сохраняем прогресс, вместо
+    # того чтобы дать GitHub Actions убить процесс по таймауту и потерять всё.
+    start_time = time.time()
+    TIME_BUDGET_SECONDS = 180  # 3 минуты — меньше, чем timeout-minutes в workflow
+    time_budget_exceeded = False
+
     for rss_url in RSS_URLS:
+        if time_budget_exceeded:
+            break
         if not is_first_run:
             print(f"Проверяю ленту: {rss_url}")
             
@@ -279,6 +288,11 @@ def check_news():
             feed = feedparser.parse(rss_url)
             
             for entry in feed.entries[:3]:
+                if not is_first_run and (time.time() - start_time) > TIME_BUDGET_SECONDS:
+                    print(f"⏱️ Бюджет времени ({TIME_BUDGET_SECONDS}с) исчерпан — сохраняю прогресс и завершаю прогон раньше срока.")
+                    time_budget_exceeded = True
+                    break
+
                 link = getattr(entry, 'link', None)
                 title = getattr(entry, 'title', 'Без заголовка')
                 
