@@ -9,10 +9,14 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: rss-parser-ua
+  cancel-in-progress: false
+
 jobs:
   run-parser:
     runs-on: ubuntu-latest
-    timeout-minutes: 4       # страховка: не даём одному запуску залипнуть дольше цикла
+    timeout-minutes: 6       # запас сверх внутреннего 3-минутного бюджета скрипта
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
