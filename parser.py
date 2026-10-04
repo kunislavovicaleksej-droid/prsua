@@ -76,7 +76,7 @@ RSS_URLS = [
     # Не подтверждены на 100% — угаданы по стандартным шаблонам данных сайтов.
     # Если после первого запуска в логе будет "Ошибка при обработке ленты"
     # для одной из них, пришли мне лог, и найду правильный адрес.
-    'https://www.rbc.ua/static/rss/index.rss',
+    'https://www.rbc.ua/static/rss/all.ukr.rss.xml',
     'https://www.ukrinform.ua/rss',
     'https://news.liga.net/rss.xml',
     'https://interfax.com.ua/news/rss',
@@ -84,7 +84,7 @@ RSS_URLS = [
     # Эти два — под вопросом даже больше: у таких сайтов часто вообще нет
     # публичного RSS, либо он спрятан по нестандартному пути. Если обе
     # строки ниже будут выдавать ошибку — просто удалим их из списка.
-    'https://www.radiosvoboda.org/api/zrqiteuuir',
+    'https://www.radiosvoboda.org/api/zrqitl-vomx-tpeoumq',
     'https://defence-ua.com/rss',
     'https://sud.ua/rss/rss_news_uk.xml'
 ]
@@ -302,10 +302,14 @@ def check_news():
                                 
                                 first_line = ai_post.split('\n')[0].replace('<b>', '').replace('</b>', '')
                                 posted_topics.append(first_line)
-                                save_json(TOPICS_FILE, posted_topics[-40:]) 
-                        
-                        history.append(link)
-                        new_posts_found = True
+                                save_json(TOPICS_FILE, posted_topics[-40:])
+                                history.append(link)
+                                new_posts_found = True
+                            else:
+                                print(f"⚠️ Groq не ответил (лимиты исчерпаны на всех ключах) — попробую эту статью на следующем прогоне.")
+                        else:
+                            history.append(link)
+                            new_posts_found = True
                         time.sleep(3)
         except Exception as e:
             print(f"Ошибка при обработке ленты {rss_url}: {e}")
